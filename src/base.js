@@ -1,17 +1,11 @@
 const { default: axios } = require("axios");
-const fs = require("fs");
+const fs = require("fs-extra");
 const chalk = require("chalk");
-const config = require("../config.json");
-const Downloader = require("nodejs-file-downloader");
+const globals = require("./globals");
 
-const API_URL = "https://opencode.tray.com.br";
+const ThemeConfig = require("./config");
 
-const path = process.cwd();
-
-const themePath = config.theme_id
-  ? `/api/themes/${config.theme_id}/assets`
-  : `/api/themes/assets`;
-var query = `?gem_version=2.0.0`;
+const config = ThemeConfig.load();
 
 const options = {
   headers: {
@@ -19,8 +13,18 @@ const options = {
   },
 };
 
+const api = axios.create({
+  baseURL: "https://opencode.tray.com.br",
+  headers: options.headers,
+});
+
 async function list() {
-  var response = await axios.get(API_URL + `/api/list${query}`, options);
+  if (ThemeConfig.check()) {
+    ThemeConfig.logError();
+    process.exit();
+  }
+
+  var response = await api.get(`/api/list${globals.defaultQuery}`);
 
   response.data["themes"].forEach((theme) => {
     if (theme.published == 0) {
@@ -41,48 +45,41 @@ async function list() {
   });
 }
 
-async function configure(args) {
-  const [api_key, pass, theme_id] = args;
-  fs.writeFileSync(
-    path + "/config.json",
-    `{"api_key": "${api_key}", "password": "${pass}", "theme_id": "${theme_id}"}`
-  );
-}
-
 async function getAllAssets() {
-  var url = API_URL + themePath + query;
-  const response = await axios.get(url, options);
+  var url = ThemeConfig.themePath() + globals.defaultQuery;
+
+  const response = await api.get(url, options);
   return response.data;
 }
 
-async function getAsset(asset) {
-  downloadFile(response.data["assets"][0]);
-}
-
 async function downloadFiles() {
+  if (ThemeConfig.check()) {
+    ThemeConfig.logError();
+    process.exit();
+  }
   var assets = await getAllAssets();
-  assets["assets"].forEach((file) => {
-    downloadFile(file);
-  });
+
+  for (i = 0; i < assets["assets"].length; i++) {
+    await downloadFile(assets["assets"][i]);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
 }
 
 async function downloadFile(asset) {
-  var url = API_URL + themePath;
-  query = query + `&key=${asset.path}`;
-  var filePath = "/" + asset.path.split("/")[1];
+  var url =
+    ThemeConfig.themePath() + globals.defaultQuery + `&key=${asset.path}`;
 
-  var fileAsset = await axios.get(url + query, options);
-  var currentPath = process.cwd() + filePath;
+  var fileAsset = await api.get(url);
+
+  var fileOutput = process.cwd() + asset.path;
 
   if (fileAsset.data.content) {
     var content = Buffer.from(fileAsset.data.content, "base64");
-    if (!fs.existsSync(currentPath)) {
-      fs.mkdirSync(currentPath);
-    }
+    fs.outputFileSync(fileOutput, content);
   }
-  fs.writeFileSync(currentPath + "/" + asset.name, content, { flag: "wx" });
 
   console.log(chalk.green(`[DOWNLOAD] ${asset.path} - OK`));
+  return true;
 }
 
-module.exports = { list, configure, getAllAssets, downloadFiles };
+module.exports = { list, getAllAssets, downloadFiles };

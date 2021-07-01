@@ -1,18 +1,20 @@
 #!/usr/bin/env node
 
 const { program } = require("commander");
-const { list, configure, getAllAssets, downloadFiles } = require("./src/base");
+const { list, getAllAssets, downloadFiles } = require("./base");
+const ThemeConfig = require("./config");
 
-program.version("1.0.0");
+ThemeConfig.load();
+
+program.version("0.0.1");
 
 program
   .option("-w, --watch", "watch for file change")
   .option("-l, --list", "list all themes")
-  .option("-a, --assets", "list all assets")
   .option("-d, --download", "download all theme files")
   .option(
     "-c, --configure",
-    "Setting up config file\n Usage: opencodejs -c API_KEY PASS THEME_ID\n"
+    "Setting up config file\n\n Usage: opencodejs -c API_KEY PASS THEME_ID\n"
   );
 
 program.parse(process.argv);
@@ -25,7 +27,7 @@ if (options.list) {
 }
 
 if (options.configure) {
-  configure(args);
+  ThemeConfig.configure(args);
 }
 
 if (options.assets) {
