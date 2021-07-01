@@ -4,9 +4,9 @@ const { program } = require("commander");
 const { list, getAllAssets, downloadFiles } = require("./base");
 const ThemeConfig = require("./config");
 
-ThemeConfig.load();
+// ThemeConfig.load();
 
-program.version("0.0.1");
+program.version("0.0.2");
 
 program
   .option("-w, --watch", "watch for file change")

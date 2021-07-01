@@ -1,20 +1,23 @@
 const fs = require("fs-extra");
 const globals = require("./globals");
 const chalk = require("chalk");
-
+const path = require("path");
 class ThemeConfig {
   static load() {
     this.config = {};
     try {
-      this.config = require(globals.currentDir + "\\config.json");
+      // console.log(path.join(globals.currentDir, "config.json"));
+      this.config = require(path.join(globals.currentDir, "config.json"));
     } catch (error) {
       return this.config;
     }
     return this.config;
   }
 
-  static async check() {
-    var configFile = await fs.existsSync(globals.currentDir + "\\config.json");
+  static check() {
+    var configFile = fs.existsSync(
+      path.join(globals.currentDir, "config.json")
+    );
     return configFile;
   }
 
@@ -32,7 +35,7 @@ class ThemeConfig {
   static configure(args) {
     const [api_key, pass, theme_id] = args;
     fs.writeFileSync(
-      globals.currentDir + "\\config.json",
+      path.join(globals.currentDir, "config.json"),
       `{"api_key": "${api_key}", "password": "${pass}", "theme_id": "${theme_id}"}`
     );
   }

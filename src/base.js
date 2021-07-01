@@ -19,7 +19,7 @@ const api = axios.create({
 });
 
 async function list() {
-  if (ThemeConfig.check()) {
+  if (ThemeConfig.check() == false) {
     ThemeConfig.logError();
     process.exit();
   }
@@ -53,7 +53,7 @@ async function getAllAssets() {
 }
 
 async function downloadFiles() {
-  if (ThemeConfig.check()) {
+  if (ThemeConfig.check() == false) {
     ThemeConfig.logError();
     process.exit();
   }
