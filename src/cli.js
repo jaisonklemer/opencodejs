@@ -6,7 +6,7 @@ const ThemeConfig = require("./config");
 
 // ThemeConfig.load();
 
-program.version("0.0.2");
+program.version("1.0.0");
 
 program
   .option("-w, --watch", "watch for file change")
