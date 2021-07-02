@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const { program } = require("commander");
-const { list, getAllAssets, downloadFiles } = require("./base");
+const { list, getAllAssets, downloadFiles, fileWatcher } = require("./base");
 const ThemeConfig = require("./config");
 
 // ThemeConfig.load();
@@ -36,4 +36,8 @@ if (options.assets) {
 
 if (options.download) {
   downloadFiles();
+}
+
+if (options.watch) {
+  fileWatcher();
 }

@@ -2,6 +2,7 @@ const { default: axios } = require("axios");
 const fs = require("fs-extra");
 const chalk = require("chalk");
 const globals = require("./globals");
+const Watcher = require("watcher");
 
 const ThemeConfig = require("./config");
 
@@ -82,4 +83,18 @@ async function downloadFile(asset) {
   return true;
 }
 
-module.exports = { list, getAllAssets, downloadFiles };
+function fileWatcher() {
+  const watcher = new Watcher(globals.currentDir, {
+    ignore: (path) => {
+      if (path.includes(".config.json")) return true;
+      if (path.includes(".gitignore")) return true;
+    },
+    ignoreInitial: true,
+  });
+
+  watcher.on("all", function (event, targetPath, targetPathNext) {
+    console.log(targetPath);
+  });
+}
+
+module.exports = { list, getAllAssets, downloadFiles, fileWatcher };
