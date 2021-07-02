@@ -2,7 +2,7 @@ const { default: axios } = require("axios");
 const fs = require("fs-extra");
 const chalk = require("chalk");
 const globals = require("./globals");
-const Watcher = require("watcher");
+const Watcher = require("chokidar");
 
 const ThemeConfig = require("./config");
 
@@ -62,7 +62,12 @@ async function downloadFiles() {
 
   for (i = 0; i < assets["assets"].length; i++) {
     await downloadFile(assets["assets"][i]);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    console.log(
+      chalk.green(
+        `[${i + 1}/${assets["assets"].length}] ${assets["assets"][i].path} - OK`
+      )
+    );
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
 }
 
@@ -79,22 +84,18 @@ async function downloadFile(asset) {
     fs.outputFileSync(fileOutput, content);
   }
 
-  console.log(chalk.green(`[DOWNLOAD] ${asset.path} - OK`));
   return true;
 }
 
 function fileWatcher() {
-  const watcher = new Watcher(globals.currentDir, {
-    ignore: (path) => {
-      if (path.includes(".config.json")) return true;
-      if (path.includes(".gitignore")) return true;
-    },
-    ignoreInitial: true,
-  });
+  Watcher.watch(".", { ignored: "config.json", ignoreInitial: true }).on(
+    "all",
+    (event, path) => {
+      console.log(path);
+    }
+  );
 
-  watcher.on("all", function (event, targetPath, targetPathNext) {
-    console.log(targetPath);
-  });
+  console.log(chalk.yellow("[INFO] File watcher is running..."));
 }
 
 module.exports = { list, getAllAssets, downloadFiles, fileWatcher };

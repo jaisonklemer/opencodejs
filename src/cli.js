@@ -27,7 +27,13 @@ if (options.list) {
 }
 
 if (options.configure) {
-  ThemeConfig.configure(args);
+  if (!args.length) {
+    ThemeConfig.logError({
+      msg: "Error, check params! Run opencodejs -h for help",
+    });
+  } else {
+    ThemeConfig.configure(args);
+  }
 }
 
 if (options.assets) {

@@ -19,8 +19,8 @@
   "dependencies": {
     "axios": "^0.21.1",
     "chalk": "^4.1.1",
+    "chokidar": "^3.5.2",
     "commander": "^8.0.0",
-    "fs-extra": "^10.0.0",
-    "watcher": "^1.2.0"
+    "fs-extra": "^10.0.0"
   }
 }
