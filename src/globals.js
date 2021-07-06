@@ -1,3 +1,3 @@
-exports.currentDir = process.cwd();
+export const currentDir = process.cwd();
 
-exports.defaultQuery = `?gem_version=2.0.0`;
+export const defaultQuery = `?gem_version=2.0.0`;
