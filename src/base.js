@@ -91,11 +91,21 @@ function fileWatcher() {
   Watcher.watch(".", { ignored: "config.json", ignoreInitial: true }).on(
     "all",
     (event, path) => {
-      console.log(path);
+      // console.log(path);
+      checkFileName(path);
     }
   );
 
   console.log(chalk.yellow("[INFO] File watcher is running..."));
+}
+
+function checkFileName(filePath) {
+  fileName = filePath.split("/");
+  fileName = fileName[fileName.length - 1];
+
+  if (fileName.match(globals.fileNameRegex)) {
+    console.log("Valid File");
+  }
 }
 
 module.exports = { list, getAllAssets, downloadFiles, fileWatcher };
