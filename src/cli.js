@@ -28,9 +28,7 @@ if (options.list) {
 
 if (options.configure) {
   if (!args.length) {
-    ThemeConfig.logError({
-      msg: "Error, check params! Run opencodejs -h for help",
-    });
+    ThemeConfig.logError("Error, check params! Run opencodejs -h for help");
   } else {
     ThemeConfig.configure(args);
   }

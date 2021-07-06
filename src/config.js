@@ -40,9 +40,9 @@ class ThemeConfig {
     );
   }
 
-  static logError({
-    msg = "Config file not set. Execute opencodejs -c API_KEY PASS THEME_ID",
-  }) {
+  static logError(
+    msg = "Config file not set. Execute opencodejs -c API_KEY PASS THEME_ID"
+  ) {
     console.log(chalk.red(msg));
   }
 }
