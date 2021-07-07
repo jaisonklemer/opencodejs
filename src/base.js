@@ -67,7 +67,7 @@ async function downloadFiles() {
         `[${i + 1}/${assets["assets"].length}] ${assets["assets"][i].path} - OK`
       )
     );
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 200));
   }
 }
 
@@ -88,6 +88,11 @@ async function downloadFile(asset) {
 }
 
 function fileWatcher() {
+  if (ThemeConfig.check() == false) {
+    ThemeConfig.logError();
+    process.exit();
+  }
+
   Watcher.watch(".", { ignored: "config.json", ignoreInitial: true }).on(
     "all",
     (event, path) => {
@@ -104,8 +109,29 @@ function checkFileName(filePath) {
   fileName = fileName[fileName.length - 1];
 
   if (fileName.match(globals.fileNameRegex)) {
-    console.log("Valid File");
+    uploadFile(filePath);
   }
+}
+
+function uploadFile(file) {
+  var data = { key: `/${file}` };
+
+  var content = fs.readFileSync(file);
+  content = Buffer.from(content).toString("base64");
+
+  Object.assign(data, { value: content, gem_version: "2.0.0" });
+
+  var url = ThemeConfig.themePath();
+
+  console.log(chalk.blue(`[UPLOAD] Uploading file ${data.key}`));
+  api
+    .put(url, data)
+    .then((response) => {
+      console.log(chalk.green(`[SUCCESS] File ${data.key} uploaded!`));
+    })
+    .catch((error) => {
+      console.log(chalk.red(`[ERROR] ${error.response.data.message}`));
+    });
 }
 
 module.exports = { list, getAllAssets, downloadFiles, fileWatcher };
