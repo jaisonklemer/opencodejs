@@ -40,8 +40,10 @@ opencodejs -h
 
 ## To-Do
 
-- [ ] Upload de arquivos
+- [x] Upload de arquivos
 
-- [ ] File Watcher
+- [x] File Watcher
 
 - [ ] Deletar arquivos
+
+- [ ] Salvar lista de arquivos modificados e adicionados
